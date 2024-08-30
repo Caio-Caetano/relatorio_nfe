@@ -1,11 +1,11 @@
 import './App.css'
-import FetchData from './FetchData'
+import RelatorioDeUso from './RelatorioDeUso'
 
 function App() {
 
   return (
     <div>
-      <FetchData />
+      <RelatorioDeUso />
     </div>
   )
 }

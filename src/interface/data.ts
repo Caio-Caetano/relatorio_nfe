@@ -1,5 +1,5 @@
 export interface RelatorioData {
-    clc_cli_codig: string,
+    clc_cli_codigo: string,
     clc_valor: string,
     clc_datainicio: string,
     clc_datafim: string,

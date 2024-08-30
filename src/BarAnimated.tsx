@@ -2,12 +2,13 @@ import styled from "@emotion/styled";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { animated, useSpring } from "@react-spring/web";
 import { format } from "date-fns";
+import { ptBR } from 'date-fns/locale';
 
 function BarAnimated({ width, startOffset, item }: {
     width: number, startOffset: number, item: {
         clc_datainicio: Date;
         clc_datafim: Date;
-        clc_cli_codig: string;
+        clc_cli_codigo: string;
         clc_valor: string;
         cli_nome: string;
     }
@@ -33,8 +34,8 @@ function BarAnimated({ width, startOffset, item }: {
     return (
         <HtmlTooltip title={
             <>
-                {`Data Início: ${format(item.clc_datainicio, 'MMM/yy')}`} <br />
-                {`Data Fim: ${format(item.clc_datafim, 'MMM/yy')}`}
+                {`Data Início: ${format(item.clc_datainicio, 'MMM/yy', { locale: ptBR }).capitalize()}`} <br />
+                {`Data Fim: ${format(item.clc_datafim, 'MMM/yy', { locale: ptBR }).capitalize()}`}
             </>
         } placement='top'>
             <animated.div

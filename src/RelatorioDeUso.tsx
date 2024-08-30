@@ -49,33 +49,70 @@ const RelatorioDeUso = () => {
 
     const processedData = processData(data ?? []);
 
+    // Filtragem dos dados com base no termo de pesquisa
+    const filteredData = useMemo(() => {
+        return processedData.filter(item => {
+            const itemStartYear = new Date(item.clc_datainicio).getFullYear();
+            const itemEndYear = new Date(item.clc_datafim).getFullYear();
+
+            const selectedYear = parseInt(ano, 10);
+
+            // Verifica se o intervalo do cliente intercepta com o ano selecionado
+            const isWithinYear =
+                !ano ||
+                (itemStartYear <= selectedYear && itemEndYear >= selectedYear);
+
+            return item.cli_nome.toLowerCase().includes(searchTerm.toLowerCase()) && isWithinYear;
+        });
+    }, [searchTerm, ano, processedData]);
+
+    const filteredDates = filteredData.map(d => ({
+        start: new Date(d.clc_datainicio),
+        end: new Date(d.clc_datafim),
+    }));
+
+    const minDate = useMemo(() => {
+        return ano ? startOfYear(new Date(parseInt(ano), 0, 1)) : new Date(Math.min(...filteredDates.map(d => d.start.getTime())));
+    }, [filteredDates, ano]);
+
+    const maxDate = useMemo(() => {
+        return ano
+            ? new Date(Math.max(...filteredDates.map(d => d.end.getTime())))
+            : new Date(Math.max(...filteredDates.map(d => d.end.getTime())));
+    }, [filteredDates, ano]);
+
+    const months = useMemo(() => differenceInMonths(maxDate, minDate) + 1, [maxDate, minDate]);
+
+    const monthLabels = useMemo(() => {
+        let interval = 1;
+        if (months > 60) {
+          interval = 6; // 5 anos ou mais: 6 em 6 meses
+        } else if (months > 36) {
+          interval = 5; // 3 a 5 anos: 5 em 5 meses
+        } else if (months > 12) {
+          interval = 3; // 1 a 3 anos: 3 em 3 meses
+        }
+    
+        return Array.from({ length: months }, (_, i) =>
+          i % interval === 0 || i === months - 1
+            ? format(addMonths(minDate, i), 'MMM/yy', { locale: ptBR }).capitalize()
+            : ''
+        );
+      }, [months, minDate]);
+
     // Renderiza de acordo com o estado da requisição
     if (loading) return <p>Carregando...</p>;
     if (error) return <p>Erro: {error}</p>;
 
     // Função para calcular a posição e o tamanho da barra
-    const calculateBarPosition = (startDate: Date, endDate: Date, minDate: Date, maxDate: Date) => {
+    function calculateBarPosition(startDate: Date, endDate: Date, minDate: Date, maxDate: Date) {
         const totalDuration = maxDate.getTime() - minDate.getTime();
         const startOffset = ((startDate.getTime() - minDate.getTime()) / totalDuration) * 100;
         const endOffset = ((endDate.getTime() - minDate.getTime()) / totalDuration) * 100;
         const width = endOffset - startOffset;
 
         return { startOffset, width };
-    };
-
-    const minDate = new Date(Math.min(...processedData.map(d => d.clc_datainicio.getTime())));
-    const maxDate = new Date(Math.max(...processedData.map(d => d.clc_datafim.getTime())));
-
-    const months = differenceInMonths(maxDate, minDate) + 1;
-    const monthLabels = Array.from({ length: months }, (_, i) =>
-        i % 9 === 0 || i === months - 1 ? format(addMonths(minDate, i), 'MMM/yy', { locale: ptBR }).capitalize() : ''
-    );
-
-    // Filtragem dos dados com base no termo de pesquisa
-    const filteredData = processedData.filter(item =>
-        item.cli_nome.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (!ano || new Date(item.clc_datainicio).getFullYear() >= parseInt(ano))
-    );
+    }
 
     // Controla o Modal ao clicar no nome do cliente
     const openModal = (codigo: string) => {
@@ -186,9 +223,12 @@ const RelatorioDeUso = () => {
                 <Grid2 size={10}>
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                         {filteredData.map((item) => {
+                            const itemStartDate = new Date(item.clc_datainicio);
+                            const itemEndDate = new Date(item.clc_datafim) > maxDate ? maxDate : new Date(item.clc_datafim);
+
                             const { startOffset, width } = calculateBarPosition(
-                                item.clc_datainicio,
-                                item.clc_datafim,
+                                itemStartDate < minDate ? minDate : itemStartDate, // Se a data de início for menor que minDate, use minDate
+                                itemEndDate > maxDate ? maxDate : itemEndDate, // Se a data de fim for maior que maxDate, use maxDate
                                 minDate,
                                 maxDate
                             );

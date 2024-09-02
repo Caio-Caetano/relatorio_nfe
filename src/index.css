@@ -5,16 +5,19 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #c7c7c7; /* Cor do fundo da trilha da barra de rolagem */
+  background: #c7c7c7;
+  /* Cor do fundo da trilha da barra de rolagem */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #6c2eaa; /* Cor da barra de rolagem */
+  background: #6c2eaa;
+  /* Cor da barra de rolagem */
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b1a5a; /* Cor da barra de rolagem quando o mouse está sobre ela */
+  background: #3b1a5a;
+  /* Cor da barra de rolagem quando o mouse está sobre ela */
 }
 
 :root {
@@ -36,6 +39,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }

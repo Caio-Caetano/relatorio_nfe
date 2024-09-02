@@ -36,6 +36,9 @@ function SelectAno({ onChangeAno }: { onChangeAno: (ano: string) => void }) {
                     label="Ano"
                     onChange={handleChange}
                 >
+                    <MenuItem value="">
+                        <em>Limpar seleção</em>
+                    </MenuItem>
                     {
                         listaAno.map((ano) => (
                             <MenuItem key={ano} value={ano}>

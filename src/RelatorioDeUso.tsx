@@ -8,24 +8,27 @@ import styled from '@emotion/styled';
 import { ptBR } from 'date-fns/locale';
 import './utils/stringExtension.ts';
 import SelectAno from './components/SelectAno.tsx';
+import LoadingComponent from './components/LoadingComponent.tsx';
+import ErrorComponent from './components/ErrorComponent.tsx';
 
 const RelatorioDeUso = () => {
+    const BASE_URL = import.meta.env.VITE_BASE_URL;
+
     // Criação das váriaves
     const [data, setData] = useState<RelatorioData[] | null>(null); // Retorno dos dados
     const [loading, setLoading] = useState(true); // Carregando...
     const [error, setError] = useState<string | null>(null); // Erro
     const [searchTerm, setSearchTerm] = useState<string>(''); // Termo digitado na barra de pesquisa
+    const [ano, setAno] = useState(''); // Termo selecionado no SELECT do ano
+    
     const [isModalOpen, setIsModalOpen] = useState(false); // Controle do Modal
     const [content, setContent] = useState(''); // Controle do conteúdo do Modal
-    const [ano, setAno] = useState(''); // Termo selecionado no SELECT do ano
-
-    const BASE_URL = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('/api/rel_periodouso.php')
-                // const response = await fetch(`${BASE_URL}&ano=${ano}`)
+                // const response = await fetch('/api/rel_periodouso.php')
+                const response = await fetch(`${BASE_URL}&ano=${ano}`)
                 const formated: RelatorioData[] = await response.json()
                 setData(formated)
             } catch (err) {
@@ -34,9 +37,9 @@ const RelatorioDeUso = () => {
                 setLoading(false)
             }
         };
-
+        
         fetchData();
-    }, []);
+    }, [ano]);
 
     // Função para processar os dados e formatar as datas
     const processData = (data: RelatorioData[]) => {
@@ -100,10 +103,6 @@ const RelatorioDeUso = () => {
         );
       }, [months, minDate]);
 
-    // Renderiza de acordo com o estado da requisição
-    if (loading) return <p>Carregando...</p>;
-    if (error) return <p>Erro: {error}</p>;
-
     // Função para calcular a posição e o tamanho da barra
     function calculateBarPosition(startDate: Date, endDate: Date, minDate: Date, maxDate: Date) {
         const totalDuration = maxDate.getTime() - minDate.getTime();
@@ -141,6 +140,10 @@ const RelatorioDeUso = () => {
     const handleChangeAno = (anoSelecionado: string) => {
         setAno(anoSelecionado);
     };
+
+    // Renderiza de acordo com o estado da requisição
+    if (loading) return <LoadingComponent />;
+    if (error) return <ErrorComponent errorMessage={error} />;
 
     return (
         <Box sx={{ width: '99vw', height: '99vh' }}>

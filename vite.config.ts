@@ -8,7 +8,7 @@ export default defineConfig({
   //   proxy: {
   //     // Proxy para o backend PHP
   //     '/api': {
-  //       target: 'https://desenvolvimento.vaplink.com.br/dev/andre/outros',
+  //       target: 'https://php8.appdegestao.com.br/web/frenty/erp/relatorios2',
   //       // target: 'https://desenvolvimento.vaplink.com.br/dev/andre/Master/erp/relatorios2',
   //       changeOrigin: true,
   //       rewrite: (path) => path.replace(/^\/api/, ''),

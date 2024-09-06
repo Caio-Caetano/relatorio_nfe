@@ -27,7 +27,7 @@ const RelatorioDeUso = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // const response = await fetch('/api/rel_periodouso.php')
+                // const response = await fetch('/api/dados_json.php?acao=contratos_periodo_uso')
                 const response = await fetch(`${BASE_URL}&ano=${ano}`)
                 const formated: RelatorioData[] = await response.json()
                 setData(formated)
@@ -115,7 +115,7 @@ const RelatorioDeUso = () => {
 
     // Controla o Modal ao clicar no nome do cliente
     const openModal = (codigo: string) => {
-        const url = `https://desenvolvimento.vaplink.com.br/dev/andre/Master/erp/cadastro/tclienteexibe.php?codigocliente=${codigo}`;
+        const url = `https://php8.appdegestao.com.br/web/frenty/erp/cadastro/tclienteexibe.php?codigocliente=${codigo}`;
         setContent(url);
         setIsModalOpen(true);
     };
